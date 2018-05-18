@@ -22,7 +22,7 @@ def escape_html(s, quote=True):
     characters, both double quote (") and single quote (') characters are also
     translated.
 
-    If a `HTMLString` is provied, it's assumed that whatever you give to
+    If a `HTMLString` is provided, it's assumed that whatever you give to
     escape_html is a string with any unsafe values already escaped.
     """
     if hasattr(s, '__html__'):

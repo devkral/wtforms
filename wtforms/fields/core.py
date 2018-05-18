@@ -97,7 +97,7 @@ class Field(object):
             raise TypeError("Must provide one of _form or _meta")
 
         self.default = default
-        self.description = description
+        self.description = widgets.escape_html(description, quote=False)
         self.render_kw = render_kw
         self.filters = filters
         self.flags = Flags()
@@ -107,7 +107,9 @@ class Field(object):
         self.validators = validators or list(self.validators)
 
         self.id = id or self.name
-        self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
+        if label is None:
+            label = self.gettext(_name.replace('_', ' ').title())
+        self.label = Label(self.id, widgets.escape_html(label, quote=False))
 
         if widget is not None:
             self.widget = widget
@@ -379,6 +381,9 @@ class Label(object):
     """
     An HTML form label.
     """
+
+    do_not_call_in_templates = True  # Allow Django 1.4 traversal
+
     def __init__(self, field_id, text):
         self.field_id = field_id
         self.text = text
@@ -398,8 +403,13 @@ class Label(object):
         else:
             kwargs.setdefault('for', self.field_id)
 
+        if text:
+            text = widgets.escape_html(text)
+        else:
+            text = self.text
+
         attributes = widgets.html_params(**kwargs)
-        return widgets.HTMLString('<label %s>%s</label>' % (attributes, text or self.text))
+        return widgets.HTMLString('<label %s>%s</label>' % (attributes, text))
 
     def __repr__(self):
         return 'Label(%r, %r)' % (self.field_id, self.text)
