@@ -109,7 +109,7 @@ class Field(object):
         self.id = id or self.name
         if label is None:
             label = self.gettext(_name.replace('_', ' ').title())
-        self.label = Label(self.id, widgets.escape_html(label, quote=False))
+        self.label = Label(self.id, label)
 
         if widget is not None:
             self.widget = widget
@@ -386,7 +386,7 @@ class Label(object):
 
     def __init__(self, field_id, text):
         self.field_id = field_id
-        self.text = text
+        self.text = widgets.escape_html(text, quote=False)
 
     def __str__(self):
         return self()
@@ -404,7 +404,7 @@ class Label(object):
             kwargs.setdefault('for', self.field_id)
 
         if text:
-            text = widgets.escape_html(text)
+            text = widgets.escape_html(text, quote=False)
         else:
             text = self.text
 
